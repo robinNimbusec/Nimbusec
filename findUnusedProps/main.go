@@ -1,46 +1,19 @@
-package main
+package main 
 
 import (
-    "bufio"
     "fmt"
-    "log"
+    "../findUnusedProps/services"
     "os"
-    "strings"
 )
 
 func main() {
-    path := "./inputFiles/inputLines.properties"
-    checkFile(path)
-}
+    pathToInputLines := os.Args[1]//"./inputFiles/inputLines.properties"
+    pathForSearching := os.Args[2]//"./inputFiles/research.html"
 
-func checkFile(path string){
-    file, err := os.Open(path)
-    var keys []string
-    if err != nil {
-        log.Fatal(err)
-    }
+    //fmt.Prinln()
+    keys := service.GetKeys(pathToInputLines)
+    fmt.Printf("Keys: %d\n", len(keys))
     
-    defer file.Close()
-    
-    scanner := bufio.NewScanner(file)
-
-    for scanner.Scan() {
-        line := strings.TrimSpace(scanner.Text())
-
-        if (line == "" || line[0] == '#') {
-            continue;
-        }
-
-        key := strings.Split(line, "=")
-        fmt.Println("key: %v", key)
-
-        keys = append(keys, string(key))
-    }
-
-    //fmt.Printf("Keys: %#v", keys)
-
-
-    if err := scanner.Err(); err != nil {
-        log.Fatal(err)
-    }
+    unusedKeys := service.GetUnusedKeys(pathForSearching, keys)
+    fmt.Printf("Unused keys: %d \n", len(unusedKeys))
 }
