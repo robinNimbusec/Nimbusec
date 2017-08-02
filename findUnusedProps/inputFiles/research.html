@@ -1,0 +1,64 @@
+<th:block th:if="${issue.event == 'suspicious-request'}">
+	<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td class="mui-panel">
+				<table>
+					<tr>
+						<td class="label" th:text="#{msg.label.detectedby}">
+							Detected by:
+						</td>
+						<td align="left" th:text="#{jobtype.origin.+${issue.origin}}">
+							Nimbusec Agent / Internal Scan
+						</td>
+					</tr>
+					<tr>
+						<td class="label" th:text="#{msg.label.desc}">
+							Description:
+						</td>
+						<td>
+							<span th:text="#{msg.desc.reputationref}"></span>
+						</td>
+					</tr>
+					<tr>
+						<td class="label" th:text="#{msg.label.requestedurls}">
+							Requested URLs:
+						</td>
+						<td>
+							<ul class="mui-list--unstyled">
+								<li th:each="url: ${issue.details.urls}" th:text="${url}">http://foo.com</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td class="label" th:text="#{msg.label.blacklists}">
+							Blacklists:
+						</td>
+						<td>
+							<ul class="mui-list--unstyled">
+								<li th:each="blacklist : ${issue.details.blacklists}">
+									<span th:if="${blacklist.blacklistURL == ''}" th:text="${blacklist.blacklist}">Google Safe Browsing</span>
+									<a target="_blank" th:unless="${blacklist.blacklistURL == ''}" th:href="${blacklist.blacklistURL}" th:text="${blacklist.blacklist}">
+										Google Safe Browsing
+									</a>
+									<ul>
+										<li th:each="reason : ${blacklist.reasons}">
+											<span th:text="#{|blacklist.reason.${reason}|}">ransomware</span>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<!-- panel end -->
+		</tr>
+		<!-- panel end -->
+	</table>
+	<!-- panel end -->
+	<table>
+		<tr>
+			<td class="spacer">&nbsp;</td>
+		</tr>
+	</table>
+</th:block>
