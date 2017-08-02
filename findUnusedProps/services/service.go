@@ -7,7 +7,7 @@ import (
     "strings"
 )
 
-func GetKeys(path string)(keys []string){
+func GetKeys(path string)(keys []string){ 
     file, err := os.Open(path)
     if err != nil {
         log.Fatal(err)
