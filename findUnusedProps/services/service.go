@@ -5,6 +5,7 @@ import (
     "log"
     "os"
     "strings"
+    "fmt"
 )
 
 func GetKeys(path string)(keys []string){ 
@@ -54,6 +55,18 @@ func GetUnusedKeys(path string, keys []string)(ukeys []string){
         }
     }
     return ukeys
+}
+
+func WriteSliceToFile(ukeys []string){
+    fileHandle, _ := os.Create("output.txt")
+	writer := bufio.NewWriter(fileHandle)
+	defer fileHandle.Close()
+
+    for i := 0; i<len(ukeys);i++ {
+        fmt.Fprintln(writer, ukeys[i])  
+    }	
+    
+    writer.Flush()
 }
 
 /*
