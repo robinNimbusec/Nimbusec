@@ -6,6 +6,8 @@ import (
     "os"
     "strings"
     "fmt"
+    "regexp"
+    "io/ioutil"
 )
 
 func GetKeys(path string)(keys []string){ 
@@ -34,23 +36,43 @@ func GetKeys(path string)(keys []string){
     return keys
 }
 
-func GetUnusedKeys(path string, keys []string)(ukeys []string){
-    file, err := os.Open(path)
+func GetMsgProps(path string) []string{
+    content, err := ioutil.ReadFile(path)
     if err != nil {
-        log.Fatal(err)
+        fmt.Print(err)
     }
-    
-    defer file.Close()
 
+    strContent := string(content)
+
+    messages, err := regexp.Compile(`#{.+}`)
+    if err != nil {
+        fmt.Print(err)
+    }
+    msgProps := messages.FindAllString(strContent, -1)
+
+    msgPropsString := strings.Join(msgProps,"")
+    filteredMessages, err := regexp.Compile(`#{\|?(\w+(\.\w+)*)`)
+    if err != nil {
+        fmt.Print(err)
+    }
+    msgPropsFiltered := filteredMessages.FindAllString(msgPropsString, -1)
+
+    msgPropsStringFinal := strings.Join(msgPropsFiltered,"")
+    filteredMessagesFinal, err := regexp.Compile(`\w+(\.\w+)*`)
+    if err != nil {
+        fmt.Print(err)
+    }
+    msgPropsFilteredFinal := filteredMessagesFinal.FindAllString(msgPropsStringFinal, -1)
+
+    return msgPropsFilteredFinal
+}
+
+func GetUnusedKeys(msgPropsHtml []string, keys []string)(ukeys []string){
     ukeys = keys
-    scanner := bufio.NewScanner(file)
-
-    for scanner.Scan() {
-        line := scanner.Text()
-
-        for index, key := range keys {
-            if strings.Contains(line, key) {
-                ukeys = append(ukeys[:index], ukeys[index+1:]...)
+    for i := 0; i < len(msgPropsHtml); i++{
+        for j := 0; j < len(keys); j++{
+            if msgPropsHtml[i] == keys[j] {
+                ukeys = append(ukeys[:j], ukeys[j+1:]...)
             }
         }
     }
