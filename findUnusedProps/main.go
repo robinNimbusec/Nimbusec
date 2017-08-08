@@ -25,12 +25,22 @@ func main(){
     pathToInputLines := os.Args[1]
 
     keys := service.GetKeys(pathToInputLines)
-
     fmt.Printf("Keys: %d\n", len(keys))
+
+    var messageProps []string
     for i := 0; i < len(paths); i++ { 
-        keys = service.GetUnusedKeys(paths[i], keys)
+        messageProps = append(messageProps, service.GetMsgProps(paths[i])...)
+        fmt.Printf("Count: %v",len(messageProps))
     }
-    fmt.Printf("Unused keys: %d \n", len(keys))
+
+    fmt.Printf("MessageProps: %d \n", len(messageProps))
+
+    ukeys := service.GetUnusedKeys(messageProps, keys)
+
+
+    fmt.Printf("Unused keys: %d \n", len(ukeys))
+
+    service.GetMsgProps(paths[0])
 
     service.WriteSliceToFile(keys)
 }
